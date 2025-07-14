@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ShortUrlDto {
 
     private String message;
@@ -21,6 +23,7 @@ public class ShortUrlDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     public static class Result {
         @NotNull(message = "Hash cannot be null.")
         @NotBlank(message = "Hash cannot be empty.")

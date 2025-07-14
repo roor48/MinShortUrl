@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import study.min.shorturl.component.ServerInfo;
@@ -21,6 +23,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     // 기본적인 URL 정규식 패턴 (더 복잡하게 만들 수도 있습니다)
     private final String URL_REGEX = "^(http|https)://[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/\\S*)?$";
     private final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+
+    private Logger LOGGER = LoggerFactory.getLogger(ShortUrlServiceImpl.class);
 
     private final ShortUrlHandler shortUrlHandler;
     private final ServerInfo serverInfo;
@@ -60,6 +64,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             "200"
         );
 
+        LOGGER.info("[saveUrlDto] ShortUrlDto = {}", shortUrlDto);
 
         return shortUrlDto;
     }
@@ -80,6 +85,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             result,
             "200"
         );
+
+        LOGGER.info("[getUrlDto] ShortUrlDto = {}", shortUrlDto);
 
         return shortUrlDto;
     }
