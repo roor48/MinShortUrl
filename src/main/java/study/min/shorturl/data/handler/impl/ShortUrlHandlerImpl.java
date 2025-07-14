@@ -23,18 +23,18 @@ public class ShortUrlHandlerImpl implements ShortUrlHandler {
     }
 
     @Override
-    public ShortUrlEntity saveShortUrlEntity(String originUrl) {
-        Optional<ShortUrlEntity> exiting = shortUrlDao.findByOriginalUrl(originUrl);
+    public ShortUrlEntity saveShortUrlEntity(String origin) {
+        Optional<ShortUrlEntity> foundEntity = shortUrlDao.findByOriginalUrl(origin);
 
-        if (exiting.isPresent())
-            return exiting.get();
+        if (foundEntity.isPresent())
+            return foundEntity.get();
 
-        return shortUrlDao.saveUrlEntity(new ShortUrlEntity(createUUID(), originUrl));
+        return shortUrlDao.saveUrlEntity(new ShortUrlEntity(createHash(), origin));
     }
 
     @Override
-    public ShortUrlEntity getShortUrlEntity(String UUID) {
-        Optional<ShortUrlEntity> shortUrlEntity = shortUrlDao.getUrlEntity(UUID);
+    public ShortUrlEntity getShortUrlEntity(String hash) {
+        Optional<ShortUrlEntity> shortUrlEntity = shortUrlDao.getUrlEntity(hash);
 
         if (shortUrlEntity.isPresent())
             return shortUrlEntity.get();
@@ -42,8 +42,8 @@ public class ShortUrlHandlerImpl implements ShortUrlHandler {
         return new ShortUrlEntity();
     }
 
-    private String createUUID() {
-        String randomUUID;
+    private String createHash() {
+        String randomHash;
 
         int retryCount = 0;
         do {
@@ -51,10 +51,10 @@ public class ShortUrlHandlerImpl implements ShortUrlHandler {
             if (retryCount > MAX_RETRIES) {
                 throw new RuntimeException("Failed to generate a unique short URL code after " + MAX_RETRIES + " retries. All possible codes might be exhausted or collision rate is too high.");
             }
-            randomUUID = RandomStringUtils.randomAlphabetic(7);
-        } while(shortUrlDao.existByShortUrl(randomUUID));
+            randomHash = RandomStringUtils.randomAlphabetic(7);
+        } while(shortUrlDao.existByShortUrl(randomHash));
 
-        System.out.println("[ShortUrlHandlerImpl] Created New UUID! " + randomUUID);
-        return randomUUID;
+        System.out.println("[ShortUrlHandlerImpl] Created New UUID! " + randomHash);
+        return randomHash;
     }
 }

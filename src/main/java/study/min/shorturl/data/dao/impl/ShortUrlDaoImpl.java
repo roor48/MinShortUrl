@@ -23,13 +23,13 @@ public class ShortUrlDaoImpl implements ShortUrlDao {
     }
 
     @Override
-    public Optional<ShortUrlEntity> getUrlEntity(String UUID) {
-        return shortUrlRepository.findById(UUID);
+    public Optional<ShortUrlEntity> getUrlEntity(String hash) {
+        return shortUrlRepository.findById(hash);
     }
 
     @Override
-    public Optional<ShortUrlEntity> findByOriginalUrl(String originUrl) {
-        return shortUrlRepository.findByOriginUrl(originUrl);
+    public Optional<ShortUrlEntity> findByOriginalUrl(String origin) {
+        return shortUrlRepository.findByOrigin(origin);
     }
 
     @Override

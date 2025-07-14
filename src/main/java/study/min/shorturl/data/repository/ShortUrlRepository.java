@@ -6,5 +6,5 @@ import study.min.shorturl.data.entity.ShortUrlEntity;
 import java.util.Optional;
 
 public interface ShortUrlRepository extends JpaRepository<ShortUrlEntity, String> {
-    Optional<ShortUrlEntity> findByOriginUrl(String originalUrl);
+    Optional<ShortUrlEntity> findByOrigin(String originalUrl);
 }

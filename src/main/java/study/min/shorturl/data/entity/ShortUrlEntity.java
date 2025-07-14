@@ -17,8 +17,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ShortUrlEntity {
     @Id
-    @Column(name = "uuid")
-    String UUID;
-    @Column(name = "origin_url", unique = true, nullable = false, length = 2048)
-    String originUrl;
+    @Column(name = "hash")
+    String hash;
+    @Column(name = "origin", unique = true, nullable = false, length = 2048)
+    String origin;
 }

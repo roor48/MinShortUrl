@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import study.min.shorturl.component.ServerInfo;
 import study.min.shorturl.data.dto.ShortUrlDto;
+import study.min.shorturl.data.dto.ShortUrlDto.Result;
 import study.min.shorturl.data.entity.ShortUrlEntity;
 import study.min.shorturl.data.handler.ShortUrlHandler;
 import study.min.shorturl.service.ShortUrlService;
@@ -47,9 +48,16 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
         ShortUrlEntity shortUrlEntity = shortUrlHandler.saveShortUrlEntity(normalizedUrl);
 
+        Result result = new Result(
+            shortUrlEntity.getHash(),
+            serverInfo.getBaseUrl() + shortUrlEntity.getHash(),
+            shortUrlEntity.getOrigin()
+        );
+
         ShortUrlDto shortUrlDto = new ShortUrlDto(
-            serverInfo.getBaseUrl() + shortUrlEntity.getUUID(),
-            shortUrlEntity.getOriginUrl()
+            "ok",
+            result,
+            "200"
         );
 
 
@@ -61,9 +69,16 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
         ShortUrlEntity shortUrlEntity = shortUrlHandler.getShortUrlEntity(UUID);
 
+        Result result = new Result(
+            shortUrlEntity.getHash(),
+        serverInfo.getBaseUrl() + shortUrlEntity.getHash(),
+            shortUrlEntity.getOrigin()
+        );
+
         ShortUrlDto shortUrlDto = new ShortUrlDto(
-            serverInfo.getBaseUrl() + shortUrlEntity.getUUID(),
-            shortUrlEntity.getOriginUrl()
+            "ok",
+            result,
+            "200"
         );
 
         return shortUrlDto;
@@ -91,11 +106,6 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             }
 
             // 2. 프로토콜을 항상 'https'로 통일 (선택 사항)
-            // 보안상의 이유로 https를 강제하거나, http와 https를 다른 URL로 취급할지 결정해야 합니다.
-            // 현재는 'https'로 통일하는 예시입니다.
-//            if (scheme == null || scheme.equals("http")) { // 프로토콜이 없거나 http인 경우 https로 변경
-//                scheme = "https";
-//            }
 
 
             // 3. 경로 마지막 슬래시 제거 (선택 사항)
