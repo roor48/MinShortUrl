@@ -51,7 +51,7 @@ public class ShortUrlHandlerImpl implements ShortUrlHandler {
             if (retryCount > MAX_RETRIES) {
                 throw new RuntimeException("Failed to generate a unique short URL code after " + MAX_RETRIES + " retries. All possible codes might be exhausted or collision rate is too high.");
             }
-            randomHash = RandomStringUtils.randomAlphabetic(7);
+            randomHash = RandomStringUtils.randomAlphanumeric(8);
         } while(shortUrlDao.existByShortUrl(randomHash));
 
         System.out.println("[ShortUrlHandlerImpl] Created New UUID! " + randomHash);
