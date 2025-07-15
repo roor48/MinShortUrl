@@ -20,14 +20,16 @@ import java.util.Optional;
 
 @Service
 public class ShortUrlServiceImpl implements ShortUrlService {
-    // 기본적인 URL 정규식 패턴 (더 복잡하게 만들 수도 있습니다)
-    private final String URL_REGEX = "^(http|https)://[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/\\S*)?$";
-    private final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
+
 
     private Logger LOGGER = LoggerFactory.getLogger(ShortUrlServiceImpl.class);
 
     private final ShortUrlHandler shortUrlHandler;
     private final ServerInfo serverInfo;
+
+    // URL 정규식 패턴
+    private static final String URL_REGEX = "^(http(s)?://)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(:[0-9]{1,5})?(/\\S*)?$";
+    private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
     @Autowired
     ShortUrlServiceImpl(ShortUrlHandler shortUrlHandler, ServerInfo serverInfo) {
@@ -38,12 +40,16 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     @Override
     public ShortUrlDto saveUrlDto(String originUrl) {
 
+        LOGGER.info("[saveUrlDto] create short url or get short url");
+
         // null 또는 빈 문자열 검증
         if (originUrl == null || originUrl.isBlank()) {
+            LOGGER.error("[saveUrlDto] originUrl is null or empty");
             throw new IllegalArgumentException("Original URL cannot be empty.");
         }
         // 2. URL 형식 검증 추가
         if (!isValidUrl(originUrl)) {
+            LOGGER.error("[saveUrlDto] originUrl is not valid");
             throw new IllegalArgumentException("Invalid URL format. Please provide a valid http(s) URL.");
         }
 
@@ -99,10 +105,17 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     // URL 정규화 메서드
     private String normalizeUrl(String url) {
+
+        LOGGER.info("[normalizeUrl] Start Normalize Url");
+
         try {
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url;
+            }
             URI uri = new URI(url);
             String scheme = uri.getScheme(); // http 또는 https
             String host = uri.getHost();     // www.example.com 또는 example.com
+            int port = uri.getPort(); // 포트 번호 추출
             String path = uri.getPath();     // /path/to/resource
             String query = uri.getQuery();   // ?param=value
             String fragment = uri.getFragment(); // #fragment
@@ -120,14 +133,15 @@ public class ShortUrlServiceImpl implements ShortUrlService {
                 path = path.substring(0, path.length() - 1);
             }
             // 경로가 비어있는 경우 "/"로 설정 (예: http://example.com -> http://example.com/)
-            else if (path == null || path.isEmpty()) {
+            if (path == null || path.isEmpty()) {
                 path = "/";
             }
 
 
+            LOGGER.info("[normalizeUrl] Finished Normalize Url");
             // 재구성된 URI 반환
             // URI.Builder를 사용하면 더 안전하고 유연하게 URL을 재구성할 수 있습니다.
-            return new URI(scheme, uri.getUserInfo(), host, uri.getPort(), path, query, fragment).toString();
+            return new URI(scheme, uri.getUserInfo(), host, port, path, query, fragment).toString();
 
         } catch (URISyntaxException e) {
             // 유효하지 않은 URL 형식일 경우, 그대로 반환하거나 예외 처리
